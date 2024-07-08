@@ -20,12 +20,10 @@ export const signUp = async function signUp (username, email, password) {
 
 export const getUserProfile = async (username) => {
     const response = await apiClient.get(`/accounts/${username}/` , {});
-    console.log(response);
     return response.data;
 };
 
 export const deleteUser = async (username) => {
     const response = await apiClient.delete(`/accounts/${username}/`, {});
-    console.log(response);
     return response.data;
 }

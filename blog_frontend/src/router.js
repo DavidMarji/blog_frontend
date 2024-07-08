@@ -1,39 +1,45 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Login from '@/components/Login.vue';
 import SignUp from '@/components/SignUp.vue';
-// import Home from '@/components/Home.vue';
+import Home from '@/components/Home.vue';
 import User from '@/components/User.vue';
-// import Blog from '@/components/Blog.vue';
+import Blog from '@/components/Blog.vue';
 import apiClient from './api';
 
 const routes = [
     {
         path: '/',
-        component: Login
+        component: Login,
+        name: 'LoginDefault'
     },
     {
         path: '/login',
-        component: Login
+        component: Login,
+        name: 'Login'
     },
     {
         path: '/signUp',
-        component: SignUp
+        component: SignUp,
+        name: 'SignUp'
     },
-    // {
-    //     path: '/home',
-    //     component: Home,
-    //     meta: { requiresAuth : true }
-    // },
+    {
+        path: '/home',
+        component: Home,
+        name: 'Home',
+        meta: { requiresAuth : true }
+    },
     {
         path: '/users/:username',
         component: User,
+        name: 'User',
         meta: { requiresAuth : true }
     },
-    // {
-    //     path: '/blogs/:id',
-    //     component: Blog,
-    //     meta: { requiresAuth : true }
-    // }
+    {
+        path: '/blogs/:id/:pageNumber',
+        component: Blog,
+        name: 'Blog',
+        meta: { requiresAuth : true }
+    }
 ];
 
 const router = createRouter({

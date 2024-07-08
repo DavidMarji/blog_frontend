@@ -11,7 +11,7 @@ export default {
             
             login(username, password)
             .then(data => {
-                window.location.href='/users/ayach';
+                window.location.href='/home';
             })
             .catch(error => {
                 const p = document.getElementById('errorText');

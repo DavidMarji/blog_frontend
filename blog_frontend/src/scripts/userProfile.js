@@ -2,9 +2,14 @@ import { getAllUserPublishedBlogs } from "../service/blogService";
 
 export default {
     mounted() {
-        getAllUserPublishedBlogs(this.$route.params.username)
+        const username = this.$route.params.username;
+        getAllUserPublishedBlogs(username)
         .then(publishedBlogs => {
-            const body = document.getElementById(body);
+            const title = document.getElementById("title");
+            const titleNode = document.createTextNode(`User: ${username}`);
+            title.appendChild(titleNode);
+
+            const body = document.getElementById("body");
             const newDiv = document.createElement("div");
             const divP = document.createElement("p");
             const textNode = document.createTextNode("Blogs");
@@ -13,7 +18,7 @@ export default {
             newDiv.style.top = "50%";
             newDiv.style.left = "50%";
             newDiv.style.msTransform = 'translate(-50%, -50%)';
-            newDiv.style.transform = 'translate(-50%, -50%);';
+            newDiv.style.transform = 'translate(-50%, -50%)';
             divP.style.fontSize = "x-large";
 
             body.appendChild(newDiv);
@@ -39,6 +44,7 @@ export default {
             p.style.color = "red";
             p.style.fontSize = "xx-large";
             if(!error.response) {
+                console.log(error);
                 p.innerText = "An unknown error occured.";
             }
             else {
@@ -50,6 +56,8 @@ export default {
                         p.innerText = "Sorry, the given user does not exist.";
                         break;
                     default:
+                        console.log(error.response);
+                        console.log(error.response.status);
                         p.innerText = "An unknown error occured.";
                 }
             }

@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div>
-            <p id="title">User: {{ username }}</p>
+        <div id="titleDiv">
+            <p id="title"></p>
         </div>
         <div id="body">
             
@@ -14,7 +14,15 @@
 
 <style>
 #title {
-    font-size : "xxx-large";
+    font-size : 1.8rem;
+}
+
+#titleDiv {
+    position: absolute;
+    left: 50%;
+    top: 2%;
+    -ms-transform: translate(-50%);
+    transform: translate(-50%);
 }
 
 .row {
