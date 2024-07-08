@@ -25,7 +25,7 @@ export default {
                 const blogId = await createBlog(blogTitle);
                 const page_content = await createNewPage(parseInt(blogId));
                 sessionStorage.setItem("title", blogTitle);
-                
+
                 window.location.href = `/blogs/${blogId}/1`
             }
             catch(error){
@@ -54,6 +54,4 @@ export default {
             };
         });
     },
-    // methods : {
-    // }
 }

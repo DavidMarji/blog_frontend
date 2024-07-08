@@ -30,9 +30,6 @@
 }
 
 .column {
-    flex: 10;
-    border: 1px solid black;
     padding: 10px;
-    text-align: center;
 }
 </style>
