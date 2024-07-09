@@ -89,7 +89,6 @@
 .blog-container #pageContentDiv {
     position: relative;
     margin: 5px;
-    border: 5px solid;
 }
 
 .blog-container #pageNumberDiv {
@@ -100,7 +99,6 @@
 }
 
 #pageContent {
-    border: 5px solid;
     margin: auto;
     width: 38vw;
     height: 83vh;
