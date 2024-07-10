@@ -1,42 +1,144 @@
-import { getAllUserPublishedBlogs } from "../service/blogService";
+import { getAllUserPublishedBlogs, getAllUserBlogs, getAllUserUnpublishedBlogs} from "../service/blogService";
 
 export default {
-    mounted() {
+    async mounted() {
         const username = this.$route.params.username;
-        getAllUserPublishedBlogs(username)
-        .then(publishedBlogs => {
-            const title = document.getElementById("title");
-            const titleNode = document.createTextNode(`User: ${username}`);
-            title.appendChild(titleNode);
 
-            const body = document.getElementsByTagName("body")[0];
-            const newDiv = document.createElement("div");
-            const divP = document.createElement("p");
-            const textNode = document.createTextNode("Blogs");
-            const blogsDiv = document.createElement("div");
 
-            newDiv.style.position = "absolute";
-            newDiv.style.top = "15%";
-            newDiv.style.left = "50%";
-            newDiv.style.msTransform = 'translate(-50%, -50%)';
-            newDiv.style.transform = 'translate(-50%, -50%)';
-            divP.style.fontSize = "x-large";
+        const title = document.getElementById("title");
+        const titleNode = document.createTextNode(`User: ${username}`);
+        title.appendChild(titleNode);
+
+        const body = document.getElementsByTagName("body")[0];
+        const newDiv = document.createElement("div");
+        const divP = document.createElement("p");
+        const textNode = document.createTextNode("Blogs");
+        const blogsDiv = document.createElement("div");
+        blogsDiv.setAttribute("id", "blogsDiv");
+
+        newDiv.style.position = "absolute";
+        newDiv.style.top = "15%";
+        newDiv.style.left = "50%";
+        newDiv.style.msTransform = 'translate(-50%, -50%)';
+        newDiv.style.transform = 'translate(-50%, -50%)';
+        divP.style.fontSize = "x-large";
+        this.setUpBlogsDiv(blogsDiv);
+
+        body.appendChild(newDiv);
+        newDiv.appendChild(divP);
+        divP.appendChild(textNode);
+        body.appendChild(blogsDiv);
+
+        try {
+            const userBlogs = await getAllUserBlogs(username);
+
+            const viewAllButton = document.createElement("button");
+            const viewPublishedButton = document.createElement("button");
+            const viewUnpblishedButton = document.createElement("button");
+
+            viewPublishedButton.innerText = "View Published";
+            viewAllButton.innerText = "View All Blogs";
+            viewUnpblishedButton.innerText = "view Unpublished";
+
+            body.appendChild(viewAllButton);
+            body.appendChild(viewPublishedButton);
+            body.appendChild(viewUnpblishedButton);
+
+            this.loadBlogs(userBlogs, blogsDiv);
+
+            viewAllButton.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                const allBlogs = await getAllUserBlogs(username);
+
+                const blogsDiv = document.getElementById("blogsDiv");
+                blogsDiv.parentNode.removeChild(blogsDiv);
+                const newBlogsDiv = document.createElement("div");
+                newBlogsDiv.setAttribute("id", "blogsDiv");
+                this.setUpBlogsDiv(newBlogsDiv);
+                body.appendChild(newBlogsDiv);
+
+                this.loadBlogs(allBlogs, newBlogsDiv);
+            });
+
+            viewPublishedButton.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                const allPublishedBlogs = await getAllUserPublishedBlogs(username);
+
+                const blogsDiv = document.getElementById("blogsDiv");
+                blogsDiv.parentNode.removeChild(blogsDiv);
+                const newBlogsDiv = document.createElement("div");
+                newBlogsDiv.setAttribute("id", "blogsDiv");
+                this.setUpBlogsDiv(newBlogsDiv);
+                body.appendChild(newBlogsDiv);
+
+                this.loadBlogs(allPublishedBlogs, newBlogsDiv);
+            });
+
+            viewUnpblishedButton.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                const allUnpublishedBlogs = await getAllUserUnpublishedBlogs(username);
+
+                const blogsDiv = document.getElementById("blogsDiv");
+                blogsDiv.parentNode.removeChild(blogsDiv);
+                const newBlogsDiv = document.createElement("div");
+                newBlogsDiv.setAttribute("id", "blogsDiv");
+                this.setUpBlogsDiv(newBlogsDiv);
+                body.appendChild(newBlogsDiv);
+
+                this.loadBlogs(allUnpublishedBlogs, newBlogsDiv);
+            });
+        }
+        catch (error) {
+            console.log(error);
+
+            getAllUserPublishedBlogs(username)
+            .then(publishedBlogs => {
+    
+                this.loadBlogs(publishedBlogs, blogsDiv);
+            })
+            .catch(error => {
+                const p = document.getElementById('title');
+                p.style.color = "red";
+                p.style.fontSize = "xx-large";
+                if(!error.response) {
+                    console.log(error);
+                    p.innerText = "An unknown error occured.";
+                }
+                else {
+                    switch(error.response.status) {
+                        case(401):
+                            p.innerText = "You do not have access to this page."
+                            break;
+                        case(404):
+                            p.innerText = "Sorry, the given user does not exist.";
+                            break;
+                        default:
+                            console.log(error.response);
+                            console.log(error.response.status);
+                            p.innerText = "An unknown error occured.";
+                    }
+                }
+            });
+        }
+
+    },
+    methods : {
+        setUpBlogsDiv : function(blogsDiv){
             blogsDiv.style.position = "absolute";
             blogsDiv.style.top = '20%';
             blogsDiv.style.width = '70%';
             blogsDiv.style.marginLeft = '15%';
             blogsDiv.style.marginRight = '15%';
             blogsDiv.style.display = 'block';
-
-            body.appendChild(newDiv);
-            newDiv.appendChild(divP);
-            divP.appendChild(textNode);
-            body.appendChild(blogsDiv);
-
+        },
+        loadBlogs : function(blogs, blogsDiv){
             const numCols = 5; // Number of columns per row
             const colWidth = 100 / numCols; // Width percentage of each column
 
-            for (let i = 0; i < Math.ceil(publishedBlogs.length / numCols); i++) {
+            for (let i = 0; i < Math.ceil(blogs.length / numCols); i++) {
                 const newRow = document.createElement("div");
                 newRow.className = "row";
                 newRow.style.position = "relative";
@@ -44,7 +146,7 @@ export default {
 
                 blogsDiv.appendChild(newRow);
 
-                for (let k = 0; (i * numCols) + k < publishedBlogs.length && k < numCols; k++) {
+                for (let k = 0; (i * numCols) + k < blogs.length && k < numCols; k++) {
                     const newCol = document.createElement("div");
                     newCol.className = "column";
 
@@ -65,10 +167,10 @@ export default {
                     }
                     
                     // give the newCol a blogId so that we can access it when clicked
-                    newCol.blogId = publishedBlogs[(i * numCols) + k].id;
+                    newCol.blogId = blogs[(i * numCols) + k].id;
 
                     newRow.appendChild(newCol);
-                    newCol.appendChild(document.createTextNode(publishedBlogs[(i * numCols) + k].title));
+                    newCol.appendChild(document.createTextNode(blogs[(i * numCols) + k].title));
 
                     newCol.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -88,29 +190,6 @@ export default {
                     });
                 }
             }
-        })
-        .catch(error => {
-            const p = document.getElementById('title');
-            p.style.color = "red";
-            p.style.fontSize = "xx-large";
-            if(!error.response) {
-                console.log(error);
-                p.innerText = "An unknown error occured.";
-            }
-            else {
-                switch(error.response.status) {
-                    case(401):
-                        p.innerText = "You do not have access to this page."
-                        break;
-                    case(404):
-                        p.innerText = "Sorry, the given user does not exist.";
-                        break;
-                    default:
-                        console.log(error.response);
-                        console.log(error.response.status);
-                        p.innerText = "An unknown error occured.";
-                }
-            }
-        });
-    },
+        }
+    }   
 }

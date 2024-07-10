@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="body">
         <div class="topnav">
             <button id="createBlog" @click="toggleForm">Create new blog</button>
             
@@ -7,13 +7,13 @@
 
         </div>
         <div class="form-popup" id="blogForm">
-                    <h1>Enter Your Blog Information</h1>
+            <h1>Enter Your Blog Information</h1>
 
-                    <label for="title"><b>Title</b></label>
-                    <input type="text" placeholder="Enter Title" name="title" id="title" required>
+            <label for="title"><b>Title</b></label>
+            <input type="text" placeholder="Enter Title" name="title" id="title" required>
 
-                    <button type="submit" id="submitButton">Submit</button>
-                    <button type="button" id="closeButton">Close</button>
+            <button type="submit" id="submitButton">Submit</button>
+            <button type="button" id="closeButton">Close</button>
         </div>
         <div>
             <p id="errorText"></p>
@@ -47,10 +47,10 @@
 .form-popup {
     display: none;
     position: absolute;
-    left: 3%;
+    left: 0%;
     top: 90%;
-    -ms-transform: translate(-5%, -90%);
-    transform: translate(-5%, -90%);
+    -ms-transform: translate(0%, -90%);
+    transform: translate(0%, -90%);
     border: 1px solid #ccc;
     background-color: #f1f1f1;
     width: 300px;

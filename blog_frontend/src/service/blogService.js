@@ -47,13 +47,13 @@ export const deleteBlog = async (id) => {
     return response.data;
 };
 
-export const getAllCurrentUserBlogs = async () => {
-    const response = await apiClient.get('/accounts/current/blogs/all/', {});
+export const getAllUserBlogs = async (username) => {
+    const response = await apiClient.get(`/accounts/${username}/blogs/all/`);
     return response.data;
 };
 
-export const getAllCurrentUserUnpublishedBlogs = async () => {
-    const response = await apiClient.get('/accounts/current/blogs/unpublished/all/', {});
+export const getAllUserUnpublishedBlogs = async (username) => {
+    const response = await apiClient.get(`/accounts/${username}/blogs/unpublished/all/`, {});
     return response.data;
 };
 
