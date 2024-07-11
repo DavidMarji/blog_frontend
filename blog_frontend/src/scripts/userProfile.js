@@ -54,9 +54,10 @@ export default {
             deleteUserButton.addEventListener("click", async (e) => {
                 try {
                     const deleted = await deleteUser(username);
-                    console.log(deleted);
+                    localStorage.clear();
+                    sessionStorage.clear();
                     alert("successfuly deleted user");
-                    window.location.href = "/home";
+                    window.location.href = "/signUp";
                 }
                 catch (error) {
                     if(error.response) {
@@ -64,12 +65,12 @@ export default {
                             case(404):
                                 alert("user not found");
                                 console.log(error);
-                                // window.location.href = "/home";
+                                window.location.href = "/home";
                                 break;
                             default:
                                 alert("an unknown error occured with error code", error.response.status);
                                 console.log(error);
-                                // window.location.href = "/home";
+                                window.location.href = "/home";
                                 break;
                         }
                     }

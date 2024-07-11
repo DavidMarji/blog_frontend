@@ -19,7 +19,6 @@ export default {
         try {
             const blog = await getBlogById(id);
             pageLength = parseInt(blog.number_of_pages, 10);
-            console.log(blog);
             publishStatus = blog.published;
             title.innerText = sessionStorage.getItem(id) ? sessionStorage.getItem(id) : blog.title;
         }
@@ -183,7 +182,8 @@ export default {
             pageContent.addEventListener('input', function() {
                 sessionStorage.setItem(page.id, JSON.stringify({
                     'pageContent' : pageContent.innerText,
-                    'pageNumber' : page.page_number
+                    'pageNumber' : page.page_number,
+                    "blogId" : id
                 }));
 
                 const numberList = sessionStorage.getItem('numberList');
@@ -209,10 +209,12 @@ export default {
                     const realList = numberList ? JSON.parse(numberList) : [];
                     
                     if(numberList) {
+                        let newList = [];
                         for(const i of realList) {
-                            sessionStorage.removeItem(i);
+                            if(JSON.parse(sessionStorage.getItem(i)).blogId === id) sessionStorage.removeItem(i);
+                            else newList.push(i);
                         }
-                        sessionStorage.removeItem('numberList');
+                        sessionStorage.setItem('numberList', JSON.stringify(newList));
                     }
                     location.reload();
                 }
@@ -248,13 +250,11 @@ export default {
                 try {
                     if(title.innerText.length < 5) throw new Error("Title can't be empty");
                     const updatedBlog = await updateBlogTitle(id, title.innerText);
-
-
                     const numberList = sessionStorage.getItem('numberList');
                     const realList = numberList ? JSON.parse(numberList) : [];
                     for(const i of realList) {
                         const pageJson = JSON.parse(sessionStorage.getItem(i));
-                        await updatePage(id, pageJson.pageNumber, pageJson.pageContent);
+                        if(pageJson.blogId === id) await updatePage(id, pageJson.pageNumber, pageJson.pageContent);
                     }
                     alert("successfuly saved the blog's changes");
                 }
@@ -266,7 +266,7 @@ export default {
                                 break;
                             case(404):
                                 alert("failed to save blog changes because the blog and/or pages were not found in the database");
-                                window.location.href = "/home";
+                                // window.location.href = "/home";
                                 break;
                             case(400):
                                 alert("failed to save because an invalid page number (< 1) was sent");
@@ -335,7 +335,6 @@ export default {
                     let list = [];
                     for(const id of realList) {
                         const pageJson = JSON.parse(sessionStorage.getItem(id));
-                        console.log(pageJson)
 
                         if(pageJson && parseInt(pageJson.pageNumber, 10) > parseInt(number, 10)) {
 
@@ -402,7 +401,6 @@ export default {
                 e.preventDefault();
             
                 const file = document.getElementById('imageUpload').files[0];
-                console.log(file);
                 if (file) {
                     const fileType = file.type;
                     const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
