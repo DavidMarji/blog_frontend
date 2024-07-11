@@ -4,6 +4,7 @@ import SignUp from '@/components/SignUp.vue';
 import Home from '@/components/Home.vue';
 import User from '@/components/User.vue';
 import Blog from '@/components/Blog.vue';
+import SearchResult from '@/components/SearchResult.vue';
 import apiClient from './api';
 
 const routes = [
@@ -39,6 +40,16 @@ const routes = [
         component: Blog,
         name: 'Blog',
         meta: { requiresAuth : true }
+    },
+    {
+        path: '/result',
+        component: SearchResult,
+        name: 'SearchResult',
+        meta: { requiresAuth : true }
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        redirect: '/login'
     }
 ];
 

@@ -1,4 +1,6 @@
 import { getAllUserPublishedBlogs, getAllUserBlogs, getAllUserUnpublishedBlogs} from "../service/blogService";
+import { loadBlogs, setUpBlogsDiv } from "../utilities/loadBlogs.js";
+import { deleteUser } from "../service/userService.js";
 
 export default {
     async mounted() {
@@ -22,7 +24,7 @@ export default {
         newDiv.style.msTransform = 'translate(-50%, -50%)';
         newDiv.style.transform = 'translate(-50%, -50%)';
         divP.style.fontSize = "x-large";
-        this.setUpBlogsDiv(blogsDiv);
+        setUpBlogsDiv(blogsDiv);
 
         body.appendChild(newDiv);
         newDiv.appendChild(divP);
@@ -35,7 +37,9 @@ export default {
             const viewAllButton = document.createElement("button");
             const viewPublishedButton = document.createElement("button");
             const viewUnpblishedButton = document.createElement("button");
+            const deleteUserButton = document.createElement("button");
 
+            deleteUserButton.innerText = "Delete your account";
             viewPublishedButton.innerText = "View Published";
             viewAllButton.innerText = "View All Blogs";
             viewUnpblishedButton.innerText = "view Unpublished";
@@ -43,61 +47,162 @@ export default {
             body.appendChild(viewAllButton);
             body.appendChild(viewPublishedButton);
             body.appendChild(viewUnpblishedButton);
+            body.appendChild(deleteUserButton);
 
-            this.loadBlogs(userBlogs, blogsDiv);
+            loadBlogs(userBlogs, blogsDiv);
+
+            deleteUserButton.addEventListener("click", async (e) => {
+                try {
+                    const deleted = await deleteUser(username);
+                    console.log(deleted);
+                    alert("successfuly deleted user");
+                    window.location.href = "/home";
+                }
+                catch (error) {
+                    if(error.response) {
+                        switch(error.response.status){
+                            case(404):
+                                alert("user not found");
+                                console.log(error);
+                                // window.location.href = "/home";
+                                break;
+                            default:
+                                alert("an unknown error occured with error code", error.response.status);
+                                console.log(error);
+                                // window.location.href = "/home";
+                                break;
+                        }
+                    }
+                    else {
+                        alert("an unknown error occured");
+                        console.log(error);
+                    }
+                }
+            });
 
             viewAllButton.addEventListener('click', async (e) => {
                 e.preventDefault();
 
-                const allBlogs = await getAllUserBlogs(username);
+                try {
+                    const allBlogs = await getAllUserBlogs(username);
 
-                const blogsDiv = document.getElementById("blogsDiv");
-                blogsDiv.parentNode.removeChild(blogsDiv);
-                const newBlogsDiv = document.createElement("div");
-                newBlogsDiv.setAttribute("id", "blogsDiv");
-                this.setUpBlogsDiv(newBlogsDiv);
-                body.appendChild(newBlogsDiv);
+                    const blogsDiv = document.getElementById("blogsDiv");
+                    blogsDiv.parentNode.removeChild(blogsDiv);
+                    const newBlogsDiv = document.createElement("div");
+                    newBlogsDiv.setAttribute("id", "blogsDiv");
+                    setUpBlogsDiv(newBlogsDiv);
+                    body.appendChild(newBlogsDiv);
 
-                this.loadBlogs(allBlogs, newBlogsDiv);
+                    loadBlogs(allBlogs, newBlogsDiv);
+                }
+                catch (error) { 
+                    if(error.response) {
+                        switch(error.response.status){
+                            case(404):
+                                alert("user not found");
+                                window.location.href = "/home";
+                                break;
+                            case(401):
+                                window.location.href = "/home";
+                                break;
+                            default:
+                                alert("an unknown error occured with error code", error.response.status);
+                                window.location.href = "/home";
+                                break;
+                        }
+                    }
+                    else {
+                        alert("an unknown error occured");
+                        console.log(error);
+                    }
+                }
             });
 
             viewPublishedButton.addEventListener('click', async (e) => {
                 e.preventDefault();
-
-                const allPublishedBlogs = await getAllUserPublishedBlogs(username);
-
+            
                 const blogsDiv = document.getElementById("blogsDiv");
                 blogsDiv.parentNode.removeChild(blogsDiv);
                 const newBlogsDiv = document.createElement("div");
                 newBlogsDiv.setAttribute("id", "blogsDiv");
-                this.setUpBlogsDiv(newBlogsDiv);
+                setUpBlogsDiv(newBlogsDiv);
                 body.appendChild(newBlogsDiv);
 
-                this.loadBlogs(allPublishedBlogs, newBlogsDiv);
+                this.getUserPublishedBlogs(username);
             });
 
             viewUnpblishedButton.addEventListener('click', async (e) => {
                 e.preventDefault();
 
-                const allUnpublishedBlogs = await getAllUserUnpublishedBlogs(username);
-
-                const blogsDiv = document.getElementById("blogsDiv");
-                blogsDiv.parentNode.removeChild(blogsDiv);
-                const newBlogsDiv = document.createElement("div");
-                newBlogsDiv.setAttribute("id", "blogsDiv");
-                this.setUpBlogsDiv(newBlogsDiv);
-                body.appendChild(newBlogsDiv);
-
-                this.loadBlogs(allUnpublishedBlogs, newBlogsDiv);
+                try {
+                    const allUnpublishedBlogs = await getAllUserUnpublishedBlogs(username);
+    
+                    const blogsDiv = document.getElementById("blogsDiv");
+                    blogsDiv.parentNode.removeChild(blogsDiv);
+                    const newBlogsDiv = document.createElement("div");
+                    newBlogsDiv.setAttribute("id", "blogsDiv");
+                    setUpBlogsDiv(newBlogsDiv);
+                    body.appendChild(newBlogsDiv);
+    
+                    loadBlogs(allUnpublishedBlogs, newBlogsDiv);
+                }
+                catch (error) {
+                    if(error.response) {
+                        switch(error.response.status){
+                            case(404):
+                                alert("user not found");
+                                window.location.href = "/home";
+                                break;
+                            case(401):
+                                window.location.href = "/home";
+                                break;
+                            default:
+                                alert("an unknown error occured with error code", error.response.status);
+                                window.location.href = "/home";
+                                break;
+                        }
+                    }
+                    else {
+                        alert("an unknown error occured");
+                        console.log(error);
+                    }
+                }
             });
         }
         catch (error) {
             console.log(error);
+            if(error.response) {
+                switch(error.response.status){
+                    case(404):
+                        alert("user not found");
+                        window.location.href = "/home";
+                        break;
+                    case(401):
+                        this.getUserPublishedBlogs(username);
+                        break;
+                    case(409):
+                        alert("blog has already been published, can't create a new page");
+                        break;
+                    default:
+                        alert("an unknown error occured with error code", error.response.status);
+                        window.location.href = "/home";
+                        break;
+                }
+            }
+            else {
+                alert("an unknown error occured");
+                console.log(error);
+            }
 
+        }
+
+    },
+    methods : {
+        getUserPublishedBlogs : function(username){
             getAllUserPublishedBlogs(username)
             .then(publishedBlogs => {
-    
-                this.loadBlogs(publishedBlogs, blogsDiv);
+                const blogsDiv = document.getElementById("blogsDiv");
+                loadBlogs(publishedBlogs, blogsDiv);
             })
             .catch(error => {
                 const p = document.getElementById('title');
@@ -110,11 +215,12 @@ export default {
                 else {
                     switch(error.response.status) {
                         case(401):
-                            p.innerText = "You do not have access to this page."
+                            window.location.href = "/home";
                             break;
                         case(404):
                             p.innerText = "Sorry, the given user does not exist.";
                             break;
+                        
                         default:
                             console.log(error.response);
                             console.log(error.response.status);
@@ -123,73 +229,5 @@ export default {
                 }
             });
         }
-
-    },
-    methods : {
-        setUpBlogsDiv : function(blogsDiv){
-            blogsDiv.style.position = "absolute";
-            blogsDiv.style.top = '20%';
-            blogsDiv.style.width = '70%';
-            blogsDiv.style.marginLeft = '15%';
-            blogsDiv.style.marginRight = '15%';
-            blogsDiv.style.display = 'block';
-        },
-        loadBlogs : function(blogs, blogsDiv){
-            const numCols = 5; // Number of columns per row
-            const colWidth = 100 / numCols; // Width percentage of each column
-
-            for (let i = 0; i < Math.ceil(blogs.length / numCols); i++) {
-                const newRow = document.createElement("div");
-                newRow.className = "row";
-                newRow.style.position = "relative";
-                newRow.style.top = `${15 + (i + 1) * 5}%`; // Adjust top position
-
-                blogsDiv.appendChild(newRow);
-
-                for (let k = 0; (i * numCols) + k < blogs.length && k < numCols; k++) {
-                    const newCol = document.createElement("div");
-                    newCol.className = "column";
-
-                    const leftPos = k * colWidth;
-                    newCol.style.left = `${leftPos}%`;
-                    newCol.style.width = `${colWidth}%`;
-                    newCol.style.border = 'solid';
-                    newCol.style.borderWidth = '1px';
-                    newCol.style.paddingTop = '5px';
-                    newCol.style.paddingBottom = '5px';
-                    newCol.style.paddingLeft = '10px';
-                    newCol.style.paddingRight = '10px';
-                    newCol.style.textAlign = 'center';
-
-                    if (k < numCols - 1) {
-                        newCol.style.marginRight = '1%';
-                        newCol.style.marginTop = '1%';
-                    }
-                    
-                    // give the newCol a blogId so that we can access it when clicked
-                    newCol.blogId = blogs[(i * numCols) + k].id;
-
-                    newRow.appendChild(newCol);
-                    newCol.appendChild(document.createTextNode(blogs[(i * numCols) + k].title));
-
-                    newCol.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        window.location.href = `/blogs/${newCol.blogId}/1`;
-                    });
-
-                    newCol.addEventListener('mouseenter', (e) => {
-                        e.preventDefault();
-                        newCol.style.borderColor = 'yellow';
-                        newCol.style.borderWidth = '4px';
-                    });
-
-                    newCol.addEventListener('mouseleave', (e) => {
-                        e.preventDefault();
-                        newCol.style.borderColor = 'black';
-                        newCol.style.borderWidth = '1px';
-                    });
-                }
-            }
-        }
-    }   
+    }
 }

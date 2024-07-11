@@ -14,8 +14,7 @@ export const signUp = async function signUp (username, email, password) {
         "email" : email, 
         "password" : password
     });
-    console.log("this is response", response);
-    return sessionStorage.setItem('userSession', response.data);
+    return localStorage.setItem('userSession', response.data);
 };  
 
 export const getUserProfile = async (username) => {

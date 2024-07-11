@@ -6,9 +6,9 @@ export const getAllPublishedBlogs = async () => {
 };
 
 export const getBlogByTitle = async (title) => {
-    const response = await apiClient.get(`/blogs/titles/`, {
-        'title' : title
-    });
+    const url = `/blogs/titles/${title}/`;
+    const encoded = encodeURI(url);
+    const response = await apiClient.get(encoded);
     return response.data;
 };
 
@@ -31,7 +31,7 @@ export const publishBlog = async (id) => {
 };
 
 export const unpublishBlog = async (id) => {
-    const response = await apiClient.put(`/blogs/${id}/publish/`, {});
+    const response = await apiClient.put(`/blogs/${id}/unpublish/`, {});
     return response.data;
 };
 

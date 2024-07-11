@@ -1,4 +1,6 @@
 import apiClient from "../api";
+import axios from 'axios';
+
 
 export const saveImage = async (blogId, pageNumber, formData) => {
     const response = await apiClient.post(`/blogs/${blogId}/pages/${pageNumber}/images/`, formData, {
@@ -15,5 +17,12 @@ export const deleteImage = async (blogId, pageNumber, imageId) => {
 }
 
 export const getPageImages = async (blogId, pageNumber) => {
-    const response = await apiClient.get(`/blogs/${blogId}/pages/${pageNumber}/images/`)
+    const response = await axios.get(`/blogs/${blogId}/pages/${pageNumber}/images/`, {
+        baseURL: import.meta.env.VITE_BACKEND_URL,
+        headers : {
+            authentication : localStorage.getItem('userSession'),
+        },
+        responseType: 'arraybuffer' 
+    });
+    return response.data;
 }

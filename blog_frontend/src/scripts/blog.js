@@ -1,6 +1,7 @@
 import { getSpecificPage, createNewPage, updatePage, deletePage } from "../service/pageService";
-import { getBlogById, updateBlogTitle, publishBlog } from '../service/blogService.js'
-import { saveImage } from "../service/imageService.js";
+import { getBlogById, updateBlogTitle, publishBlog, deleteBlog, unpublishBlog } from '../service/blogService.js'
+import { saveImage, getPageImages, deleteImage } from "../service/imageService.js";
+import JSZip from 'jszip';
 
 export default {
     async mounted() {
@@ -14,9 +15,11 @@ export default {
 
         let publishStatus;
         let pageLength;
+
         try {
             const blog = await getBlogById(id);
             pageLength = parseInt(blog.number_of_pages, 10);
+            console.log(blog);
             publishStatus = blog.published;
             title.innerText = sessionStorage.getItem(id) ? sessionStorage.getItem(id) : blog.title;
         }
@@ -79,7 +82,68 @@ export default {
                 throw error;
         };
 
+        getPageImages(id, number)
+        .then(async imagesZip => {
+            const zip = await JSZip.loadAsync(imagesZip);
+            const files = [];
+            let metadata = {};
+
+            if (zip.files['metadata.json']) {
+                const metadataContent = await zip.files['metadata.json'].async('string');
+                metadata = JSON.parse(metadataContent);
+            }
+
+            for (const relativePath of Object.keys(zip.files)) {
+                if (relativePath !== 'metadata.json') {
+                    const fileData = await zip.files[relativePath].async("blob");
+                    const file = new File([fileData], relativePath);
+                    const fileMetadata = metadata.find(m => m.fileName === relativePath);
+                    files.push({ file, metadata: fileMetadata });
+                }
+            }
+
+            for(const file of files) {
+                const formData = new FormData();
+                formData.append('image', file);
+                const reader = new FileReader();
+                reader.onload = function(image) {
+                    const img = document.createElement('img');
+                    img.src = image.target.result;
+                    img.alt = 'Uploaded Image';
+                    img.style.width = '100%';
+                    img.style.height = 'auto';
+                    img.imageId = file.metadata.imageId; 
+
+                    img.addEventListener('click', () => {
+                        sessionStorage.setItem("imageToDelete", img.imageId);
+                    }); 
+
+                    img.addEventListener('mouseenter', (e) => {
+                        e.preventDefault();
+                        img.style.border = "1px solid yellow";
+                    });
+        
+                    img.addEventListener('mouseleave', (e) => {
+                        e.preventDefault();
+                        img.style.border = 'none';
+                    });
+
+                    pageContentDiv.appendChild(img);
+                }
+                reader.readAsDataURL(file.file);
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
         if(!publishStatus) {
+            const deleteBlogButton = document.createElement("button");
+            deleteBlogButton.innerText = "Delete Blog";
+            
+            const deleteImageButton = document.createElement("button");
+            deleteImageButton.innerText = "Delete image";
+
             const saveButton = document.createElement("button");
             saveButton.innerText = "Save";
 
@@ -101,6 +165,8 @@ export default {
             topDiv.appendChild(createButton);
             topDiv.appendChild(publishButton);
             topDiv.appendChild(uploadImage);
+            topDiv.appendChild(deleteImageButton);
+            topDiv.appendChild(deleteBlogButton);
 
             title.addEventListener('click', function() {
                 title.setAttribute("contenteditable", true);
@@ -151,7 +217,28 @@ export default {
                     location.reload();
                 }
                 catch (error) {
-                    console.log(error);
+                    if(error.response) {
+                        switch(error.response.status){
+                            case(401):
+                                window.location.href = "/home";
+                                break;
+                            case(404):
+                                alert("failed to update blog title because it was not found in the database");
+                                window.location.href = "/home";
+                                break;
+                            case(409):
+                                alert("blog already published");
+                                break;
+                            default:
+                                alert("unknown error occured with response code", error.response.status);
+                                console.log(error);
+                                break;
+                        }
+                    }
+                    else {
+                        alert("an unknown error occured");
+                        console.log(error);
+                    }
                 }
             });
 
@@ -169,9 +256,31 @@ export default {
                         const pageJson = JSON.parse(sessionStorage.getItem(i));
                         await updatePage(id, pageJson.pageNumber, pageJson.pageContent);
                     }
+                    alert("successfuly saved the blog's changes");
                 }
                 catch (error) {
-                    console.log(error);
+                    if(error.response) {
+                        switch(error.response.status){
+                            case(401):
+                                window.location.href = "/home";
+                                break;
+                            case(404):
+                                alert("failed to save blog changes because the blog and/or pages were not found in the database");
+                                window.location.href = "/home";
+                                break;
+                            case(400):
+                                alert("failed to save because an invalid page number (< 1) was sent");
+                                break;
+                            default:
+                                alert("unknown error occured with response code", error.response.status);
+                                console.log(error);
+                                break;
+                        }
+                    }
+                    else {
+                        alert("an unknown error occured");
+                        console.log(error);
+                    }
                 }
             });
 
@@ -184,7 +293,28 @@ export default {
                     window.location.href = `/blogs/${id}/${pageLength + 1}`;
                 }
                 catch (error) {
-                    console.log(error);
+                    if(error.response) {
+                        switch(error.response.status){
+                            case(401):
+                                window.location.href = "/home";
+                                break;
+                            case(404):
+                                alert("failed to create a new page because it was not found");
+                                window.location.href = "/home";
+                                break;
+                            case(409):
+                                alert("blog has already been published, can't create a new page");
+                                break;
+                            default:
+                                alert("unknown error occured with response code", error.response.status);
+                                console.log(error);
+                                break;
+                        }
+                    }
+                    else {
+                        alert("an unknown error occured");
+                        console.log(error);
+                    }
                 }
             });
 
@@ -225,7 +355,31 @@ export default {
                     window.location.href = `/blogs/${id}/${toRedirectTo}`;
                 }
                 catch (error) {
-                    console.log(error);
+                    if(error.response) {
+                        switch(error.response.status){
+                            case(401):
+                                window.location.href = "/home";
+                                break;
+                            case(404):
+                                alert("failed to delete page because it was not found");
+                                window.location.href = "/home";
+                                break;
+                            case(400):
+                                alert("failed to delete page because an invalid page number ( < 1) was given");
+                                break;
+                            case(403):
+                                alert("failed to delete because it is the only page, you can not delete a blog's page if it is the only one");
+                                break;
+                            default:
+                                alert("unknown error occured with response code", error.response.status);
+                                console.log(error);
+                                break;
+                        }
+                    }
+                    else {
+                        alert("an unknown error occured");
+                        console.log(error);
+                    }
                 }
 
             });
@@ -248,6 +402,7 @@ export default {
                 e.preventDefault();
             
                 const file = document.getElementById('imageUpload').files[0];
+                console.log(file);
                 if (file) {
                     const fileType = file.type;
                     const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
@@ -257,8 +412,8 @@ export default {
                         formData.append('image', file);
             
                         try {
-                            await saveImage(id, number, formData);
-            
+                            const imageDAO = await saveImage(id, number, formData);
+
                             const reader = new FileReader();
                             reader.onload = function(image) {
                                 const img = document.createElement('img');
@@ -266,13 +421,49 @@ export default {
                                 img.alt = 'Uploaded Image';
                                 img.style.width = '100%';
                                 img.style.height = 'auto';
-            
+                                img.imageId = imageDAO.id; 
+
+                                img.addEventListener('click', () => {
+                                    sessionStorage.setItem("imageToDelete", img.imageId);
+                                }); 
+
+                                img.addEventListener('mouseenter', (e) => {
+                                    e.preventDefault();
+                                    img.style.border = "1px solid yellow";
+                                });
+                    
+                                img.addEventListener('mouseleave', (e) => {
+                                    e.preventDefault();
+                                    img.style.border = 'none';
+                                });
+
                                 pageContentDiv.appendChild(img);
                             }
                             reader.readAsDataURL(file);
                         } 
                         catch (error) {
-                            console.error('Error:', error);
+                            if(error.response) {
+                                switch(error.response.status){
+                                    case(401):
+                                        window.location.href = "/home";
+                                        break;
+                                    case(404):
+                                        alert("failed to save image because the page number used was not found");
+                                        window.location.href = "/home";
+                                        break;
+                                    case(400):
+                                        alert("failed to save image because the page number used was invalid (< 1)");
+                                        break;
+                                    default:
+                                        alert("unknown error occured with response code", error.response.status);
+                                        console.log(error);
+                                        break;
+                                }
+                            }
+                            else {
+                                alert("an unknown error occured");
+                                console.log(error);
+                            }
                         }
                     } 
                     else {
@@ -283,9 +474,117 @@ export default {
                     alert('No file uploaded.');
                 }
             });
+
+            deleteImageButton.addEventListener("click", async () => {
+                try {
+                    const imageToDelete = sessionStorage.getItem("imageToDelete");
+                    const images = document.getElementsByTagName('img');
+
+                    if(imageToDelete || imageToDelete === 0) {
+                        for(const image of images) {
+                            if(parseInt(image.imageId) === parseInt(imageToDelete)) {
+                                const deleted = await deleteImage(id, number, imageToDelete);
+                                image.parentElement.removeChild(image);
+                                sessionStorage.removeItem("imageToDelete");
+                                break;
+                            }
+                        }
+                    }  
+                    else {
+                        alert("Please select an image first by clicking on it!");
+                    }
+                }
+                catch (error) {
+                    if(error.response) {
+                        switch(error.response.status){
+                            case(401):
+                                window.location.href = "/home";
+                                break;
+                            case(404):
+                                alert("failed to delete image because it was not found in the database");
+                                window.location.href = "/home";
+                                break;
+                            case(400):
+                                alert("failed to delete image because an invalid page number ( < 1) was given");
+                                break;
+                            default:
+                                alert("unknown error occured with response code", error.response.status);
+                                console.log(error);
+                                break;
+                        }
+                    }
+                    else {
+                        alert("an unknown error occured");
+                        console.log(error);
+                    }
+                }
+            });
+
+            deleteBlogButton.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                try {
+                    const deleted = await deleteBlog(id);
+                    window.location.href = "/home";
+                }
+                catch (error) {
+                    if(error.response) {
+                        switch(error.response.status){
+                            case(401):
+                                window.location.href = "/home";
+                                break;
+                            case(404):
+                                alert("failed to delete blog because it was not found in the database");
+                                window.location.href = "/home";
+                                break;
+                            default:
+                                alert("unknown error occured with response code", error.response.status);
+                                console.log(error);
+                                break;
+                        }
+                    }
+                    else {
+                        alert("an unknown error occured");
+                        console.log(error);
+                    }
+                }
+            });
         }
         else {
-            
+            try {
+                const rows = await unpublishBlog(id);
+                const rowsPublished = await publishBlog(id);
+
+                const topDiv = document.getElementById("topButtons");
+                const unpublishButton = document.createElement("button");
+                unpublishButton.innerText = "Unpublish the blog";
+                topDiv.appendChild(unpublishButton);
+
+                unpublishButton.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    try {
+                        const a = await unpublishBlog(id);
+                        location.reload();
+                    }
+                    catch (error) {
+                        if(error.response.status === 401) window.location.href = "/home";
+                        else if (error.response.status === 404){
+                            alert("blog or user was not found");
+                            window.location.href = "/home";
+                        }
+                        else if(error.response.status === 409) {
+                            alert("can not unpublish an already private blog");
+                            location.reload();
+                        }
+                        else {
+                            alert("an unknown error occured");
+                            window.location.href = "/home";
+                        }
+                    }
+                });
+            }
+            catch(error) {
+            };
         }
 
         const nextButton = document.getElementById('next');
@@ -310,6 +609,6 @@ export default {
                 window.location.href = `/blogs/${id}/${parseInt(number) - 1}`;
             });
         }
-
+        
     },
 }
