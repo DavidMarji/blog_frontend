@@ -3,7 +3,7 @@
         <div class="topnav">
             <button id="createBlog" @click="toggleForm">Create new blog</button>
             
-            <input type="text" placeholder="Search.." class="search-input">
+            <input type="text" placeholder="Search.." class="search-input" id="search-input" @keyup.enter="handleSearch">
 
         </div>
         <div class="form-popup" id="blogForm">

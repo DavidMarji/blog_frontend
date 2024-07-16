@@ -3,15 +3,15 @@ import { loadBlogs, setUpBlogsDiv } from "../utilities/loadBlogs";
 
 export default {
     async mounted() {
-        const title = sessionStorage.getItem("titleToSearch");
+        const title = decodeURI(this.$route.params.title);
         const body = document.getElementById("body");
         
         try {
-            const blogFound = await getBlogByTitle(title);
+            const blogsFound = await getBlogByTitle(title);
             const blogsDiv = document.createElement("div");
             setUpBlogsDiv(blogsDiv);
             body.appendChild(blogsDiv);
-            loadBlogs([blogFound], blogsDiv);
+            loadBlogs(blogsFound, blogsDiv);
         }  
         catch (error) {
             if(error.response) {

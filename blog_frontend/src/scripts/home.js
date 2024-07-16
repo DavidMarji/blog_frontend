@@ -22,7 +22,9 @@ export default {
             try {
                 
                 const blogId = await createBlog(blogTitle);
-                sessionStorage.setItem(blogId, blogTitle);
+                sessionStorage.setItem(blogId, JSON.stringify({
+                    'title' : blogTitle
+                }));
 
                 window.location.href = `/blogs/${blogId}/1`;
             }
@@ -64,5 +66,21 @@ export default {
         .catch(error => {
             console.log(error);
         });
+
+        const searchInput = document.getElementById("search-input");
+        searchInput.addEventListener("keyup", (e) => {
+            this.handleSearch(e);
+        });
     },
+    methods: {
+        handleSearch(e) {
+            if(e.keyCode === 13) {
+                const searchTerm = document.getElementById("search-input").value;
+                if (searchTerm) {
+                    const encodedTitle = encodeURI(searchTerm);
+                    window.location.href = `/result/${encodedTitle}`;
+                }
+            }
+        },
+      },
 }
