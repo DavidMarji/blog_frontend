@@ -42,7 +42,7 @@ const routes = [
         meta: { requiresAuth : true }
     },
     {
-        path: '/result',
+        path: '/result/:title',
         component: SearchResult,
         name: 'SearchResult',
         meta: { requiresAuth : true }
