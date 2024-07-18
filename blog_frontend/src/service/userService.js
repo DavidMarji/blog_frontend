@@ -6,7 +6,8 @@ export const login = async (username, password) => {
         "username" : username, 
         "password" : password
     });
-    return localStorage.setItem('userSession', response.data);
+    localStorage.setItem('userSession', response.data);
+    return response.data;
 };
 
 export const signUp = async function signUp (username, email, password) {
@@ -16,7 +17,8 @@ export const signUp = async function signUp (username, email, password) {
         "email" : email, 
         "password" : password
     });
-    return localStorage.setItem('userSession', response.data);
+    localStorage.setItem('userSession', response.data);
+    return response.data;
 };  
 
 export const getCurrentUserProfile = async () => {
