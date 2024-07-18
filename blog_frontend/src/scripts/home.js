@@ -38,7 +38,6 @@ export default {
                 if (!error.response) {
                     p.innerText = "An unknown error occured.";
                     console.log(error);
-                    console.log(error.message);
                 }
                 else {
                     switch (error.response.status) {

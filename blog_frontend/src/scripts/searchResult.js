@@ -22,7 +22,6 @@ export default {
 
         try {
             const blogsFound = await getBlogByTitle(titleOrUsername);
-            console.log(blogsFound);
             loadBlogs(blogsFound, blogsDiv);
         }  
         catch (error) {
@@ -43,7 +42,6 @@ export default {
 
         try {
             const usersFound = await getUsers(titleOrUsername);
-            console.log(usersFound);
             loadUsers(usersFound, blogsDiv);
         }
         catch (error) {

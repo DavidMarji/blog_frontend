@@ -14,7 +14,6 @@ export default {
 
             try {
                 const data = await login(username, password);
-                console.log(data);
                 navigateToHome();
             }
             catch (error) {

@@ -404,9 +404,7 @@ export default {
                       if(realSession[number]) {
                         delete realSession[number];
                       }
-                      console.log(pageLength);
                       for(let i = parseInt(number) + 1; i <= pageLength; i++) {
-                        console.log(i, realSession[i]);
                           if(realSession[i]) {
                               realSession[i - 1] = realSession[i];
                               delete realSession[i];

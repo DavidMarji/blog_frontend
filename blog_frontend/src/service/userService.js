@@ -1,23 +1,26 @@
 import apiClient from "../api";
+import { setAuthHeader } from "../api"
 
 export const login = async (username, password) => {
-    if(localStorage.getItem("userSession")) localStorage.removeItem("userSession");
+    // if(localStorage.getItem("userSession")) localStorage.removeItem("userSession");
     const response = await apiClient.post('/accounts/login/', {
         "username" : username, 
         "password" : password
     });
     localStorage.setItem('userSession', response.data);
+    setAuthHeader();
     return response.data;
 };
 
 export const signUp = async function signUp (username, email, password) {
-    if(localStorage.getItem("userSession")) localStorage.removeItem("userSession");
+    // if(localStorage.getItem("userSession")) localStorage.removeItem("userSession");
     const response = await apiClient.post('/accounts/signup/', {
         "username" : username, 
         "email" : email, 
         "password" : password
     });
     localStorage.setItem('userSession', response.data);
+    setAuthHeader();
     return response.data;
 };  
 

@@ -14,7 +14,6 @@ export default {
 
             try {
                 const data = await signUp(username, email, password);
-                console.log(data);
                 navigateToHome();
             }
             catch (error) {
