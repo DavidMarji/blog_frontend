@@ -4,8 +4,7 @@ import { navigateToHome } from '../utilities/routerFunctions.js';
 export default {
 
     mounted() {
-        if(localStorage.getItem("userSession")) localStorage.removeItem("userSession");
-
+        
         const button = document.getElementById('submitButton');
         button.addEventListener('click', (e) => {
             e.preventDefault();

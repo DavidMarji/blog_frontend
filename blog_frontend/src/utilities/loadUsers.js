@@ -36,7 +36,7 @@ export const loadUsers = function(users, usersDiv){
             newCol.username = users[(i * numCols) + k].username;
 
             newRow.appendChild(newCol);
-            newCol.appendChild(document.createTextNode(users[(i * numCols) + k].title));
+            newCol.appendChild(document.createTextNode(users[(i * numCols) + k].username));
 
             newCol.addEventListener('click', (e) => {
                 e.preventDefault();
