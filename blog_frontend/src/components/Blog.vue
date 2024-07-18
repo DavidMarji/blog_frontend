@@ -492,8 +492,6 @@ export default {
             try {
                 const rows = await unpublishBlog(id);
                 const rowsPublished = await publishBlog(id);
-  
-                const topDiv = document.getElementById("topButtons");
                 const unpublishButton = document.createElement("button");
                 unpublishButton.innerText = "Unpublish the blog";
                 topDiv.appendChild(unpublishButton);
