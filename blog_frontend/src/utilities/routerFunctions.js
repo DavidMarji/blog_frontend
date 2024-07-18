@@ -1,27 +1,20 @@
 import router from '@/router';
-import { restVue } from './resetVue';
 
 export const navigateToHome = function navigateToHome() {
-    restVue();
-    router.push('/home');
+    router.replace('/home');
 }
 export const navigateToLogin = function navigateToLogin() {
-    restVue();
-    router.push('/login');
+    router.replace('/login');
 }
 export const navigateToSignup = function navigateToSignup() {
-    restVue();
-    router.push('/signUp');
+    router.replace('/signUp');
 }
 export const navigateToResult = function navigateToResult(title) {
-    restVue();
-    router.push(`/result/${title}`);
+    router.replace(`/result/${title}`);
 }
 export const navigateToUserProfile = function navigateToUserProfile(username) {
-    restVue();
-    router.push(`/users/${username}`);
+    router.replace(`/users/${username}`);
 }
 export const navigateToBlog = function navigateToBlog(blogId, pageNumber) {
-    restVue();
-    router.push(`/blogs/${blogId}/${pageNumber}`);
+    router.replace(`/blogs/${blogId}/${pageNumber}`);
 }

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="body">
         <div class="all" id="container">
             <div class="inside">
                 <label class="label">SignUp</label>

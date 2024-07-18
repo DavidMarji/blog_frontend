@@ -556,7 +556,7 @@ export default {
 <template>
 
 
-<div class="blog-container">
+<div id="body" class="blog-container">
     <div id="blog">
       <div id="titleDiv">
         <p id="title"></p>

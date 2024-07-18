@@ -12,7 +12,7 @@ export default {
         const titleNode = document.createTextNode(`User: ${username}`);
         title.appendChild(titleNode);
 
-        const body = document.getElementsByTagName("body")[0];
+        const body = document.getElementById("body");
         const newDiv = document.createElement("div");
         const divP = document.createElement("p");
         const textNode = document.createTextNode("Blogs");

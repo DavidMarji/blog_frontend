@@ -72,7 +72,7 @@ export default {
             }
         });
 
-        const body = document.getElementsByTagName("div")[0];
+        const body = document.getElementById("body");
         body.appendChild(userProfileButton);
 
         const blogsDiv = document.createElement("div");

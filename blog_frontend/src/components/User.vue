@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="body">
         <div id="titleDiv">
             <p id="title"></p>
         </div>
