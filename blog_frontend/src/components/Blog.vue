@@ -10,45 +10,6 @@ export default {
     Editor
   },
   methods: {
-    observeImageDeletions : async function observeImageDeletions() {
-      const tinymce = await getTinymce();
-      const targetNode = tinymce.activeEditor.getBody();
-
-      const config = { childList: true, subtree: true };
-
-      const callback = (mutationsList, observer) => {
-          for (const mutation of mutationsList) {
-            console.log(mutation);
-              if (mutation.type === 'childList') {
-                  mutation.removedNodes.forEach(async node => {
-                      if (node.nodeName==="IMG" && node.getAttribute('id')) {
-                          const imageId = node.getAttribute('id');
-                          const id = this.$route.params.id;
-                          const pageNumber = this.$route.params.pageNumber;
-
-                          console.log("save imageId in session Storage and delete it later when click save");
-                      }
-
-                      node.childNodes.forEach(async child => {
-
-                      });
-                  });
-                  const nextSibling = mutation.nextSibling;
-                  if(nextSibling && nextSibling.nodeName === "IMG" && nextSibling.getAttribute('id')) {
-                      const imageId = node.getAttribute('id');
-                      const id = this.$route.params.id;
-                      const pageNumber = this.$route.params.pageNumber;
-                      
-                      console.log("save imageId in session Storage and delete it later when click save");
-                  }
-                  
-              }
-          }
-      };
-
-      const observer = new MutationObserver(callback);
-      observer.observe(targetNode, config);
-    },
 
     dataURLToBlob : function dataURLToBlob(dataURL) {
       const [header, base64] = dataURL.split(',');
@@ -107,21 +68,12 @@ export default {
       return {
         apiKey,
         editorInit : {
-          height: 500,
+          height: 850,
           menubar: false,
           plugins: 'link image code',
           toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | code',
-          init_instance_callback: async (editor) => {
-
-            await editor.on('KeyDown', async (e) => {
-
-              if((e.keyCode == 8 || e.keyCode == 46) && editor.selection) {
-                await this.observeImageDeletions();
-              }
-            });
-          }
         }
-      }
+      };
   },
   async mounted() {
     setTimeout(async () => {
@@ -585,7 +537,7 @@ export default {
                 window.location.href = `/blogs/${id}/${parseInt(number) - 1}`;
             });
         }
-    }, "500");
+    }, "1000");
   },
 }
 </script>
@@ -702,6 +654,8 @@ export default {
  position: relative;
  text-align: center;
  padding: 5px;
+ margin: auto;
+ top: 1%;
 }
 
 
@@ -711,6 +665,10 @@ export default {
  gap: 10px;
  position: relative;
  margin: 5px;
+}
+
+#pageContent {
+  top: 20%;
 }
 
 
