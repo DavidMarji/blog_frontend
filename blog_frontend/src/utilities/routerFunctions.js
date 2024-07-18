@@ -1,5 +1,4 @@
-import { useRouter } from 'vue-router';
-const router = useRouter();
+import router from '@/router';
 
 export const navigateToHome = function navigateToHome() {
     router.push('/home');
