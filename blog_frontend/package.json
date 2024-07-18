@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm i",
-    "preview": "vite preview"
+    "install": "npm i",
+    "build" : "vite build",
+    "preview": "vite preview",
+    "serve": "vite preview",
+    "start": "serve -s dist"
   },
   "dependencies": {
     "@tinymce/tinymce-vue": "^6.0.1",

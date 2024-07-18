@@ -394,7 +394,7 @@ export default {
                         delete realSession[number];
                       }
                       console.log(pageLength);
-                      for(const i = parseInt(number) + 1; i <= pageLength; i++) {
+                      for(let i = parseInt(number) + 1; i <= pageLength; i++) {
                         console.log(i, realSession[i]);
                           if(realSession[i]) {
                               realSession[i - 1] = realSession[i];
