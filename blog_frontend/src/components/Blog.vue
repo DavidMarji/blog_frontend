@@ -171,6 +171,7 @@ export default {
                 throw error;
         };
 
+        const topDiv = document.getElementById("topButtons");
         const returnToHomeButton = document.createElement("button");
         returnToHomeButton.innerText = "home";
 
@@ -178,7 +179,9 @@ export default {
           e.preventDefault();
           navigateToHome();
         });
-  
+
+        topDiv.appendChild(returnToHomeButton);
+
         if(!publishStatus) {
             const deleteBlogButton = document.createElement("button");
             deleteBlogButton.innerText = "Delete Blog";
@@ -200,7 +203,6 @@ export default {
             publishButton.innerText = "Publish Blog";
   
   
-            const topDiv = document.getElementById("topButtons");
             topDiv.appendChild(saveButton);
             topDiv.appendChild(deleteButton);
             topDiv.appendChild(createButton);

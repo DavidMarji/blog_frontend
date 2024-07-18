@@ -72,9 +72,11 @@ export default {
             }
         });
 
+        const body = document.getElementsByTagName("div")[0];
+        body.appendChild(userProfileButton);
+
         const blogsDiv = document.createElement("div");
         setUpBlogsDiv(blogsDiv);
-        const body = document.getElementsByTagName("div")[0];
         body.appendChild(blogsDiv);
 
         getAllPublishedBlogs()
