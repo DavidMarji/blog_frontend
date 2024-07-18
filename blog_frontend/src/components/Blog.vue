@@ -4,7 +4,7 @@ import { getBlogById, updateBlogTitle, publishBlog, deleteBlog, unpublishBlog } 
 import { saveImage, deleteImage } from "../service/imageService.js";
 import Editor from '@tinymce/tinymce-vue';
 import { getTinymce } from '@tinymce/tinymce-vue/lib/cjs/main/ts/TinyMCE';
-import { navigateToHome, navigateToBlog } from '../utilities/routerFunctions.js';
+import { navigateToHome, navigateToBlog, reloadPage } from '../utilities/routerFunctions.js';
 
 export default {
   components: {
@@ -263,7 +263,7 @@ export default {
                 try {
                     const published = await publishBlog(id);
                     sessionStorage.removeItem(id);
-                    navigateToBlog(this.$route.params.id, this.$route.params.pageNumber);
+                    reloadPage();
                 }
                 catch (error) {
                     if(error.response) {
@@ -327,7 +327,7 @@ export default {
 
                     sessionStorage.removeItem(id);
                     alert("successfuly saved the blog's changes");
-                    navigateToBlog(this.$route.params.id, this.$route.params.pageNumber);
+                    reloadPage();
                 }
                 catch (error) {
                     if(error.response) {
@@ -500,7 +500,7 @@ export default {
                     e.preventDefault();
                     try {
                         const a = await unpublishBlog(id);
-                        navigateToBlog(this.$route.params.id, this.$route.params.pageNumber);
+                        reloadPage();
                     }
                     catch (error) {
                         if(error.response.status === 401) navigateToHome();
@@ -510,7 +510,7 @@ export default {
                         }
                         else if(error.response.status === 409) {
                             alert("can not unpublish an already private blog");
-                            navigateToBlog(this.$route.params.id, this.$route.params.pageNumber);
+                            reloadPage();
                         }
                         else {
                             alert("an unknown error occured");
