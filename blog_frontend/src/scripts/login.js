@@ -9,7 +9,7 @@ export default {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            
+
             login(username, password)
             .then(data => {
                 navigateToHome();

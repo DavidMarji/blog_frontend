@@ -1,6 +1,7 @@
 import { createBlog, getAllPublishedBlogs } from "../service/blogService.js";
+import { getCurrentUserProfile } from "../service/userService.js";
 import { loadBlogs, setUpBlogsDiv } from "../utilities/loadBlogs.js";
-import { navigateToBlog, navigateToResult } from "../utilities/routerFunctions.js";
+import { navigateToBlog, navigateToResult, navigateToUserProfile } from "../utilities/routerFunctions.js";
 
 export default {
     mounted() {
@@ -54,6 +55,21 @@ export default {
                     }
                 }
             };
+        });
+
+        const userProfileButton = document.createElement("button");
+        userProfileButton.innerText = "go to your profile";
+
+        userProfileButton.addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            try {
+                const currentUserUsername = await getCurrentUserProfile();
+                navigateToUserProfile(currentUserUsername);
+            }
+            catch (error) {
+                console.log(error);
+            }
         });
 
         const blogsDiv = document.createElement("div");

@@ -39,18 +39,26 @@ export default {
             const viewPublishedButton = document.createElement("button");
             const viewUnpblishedButton = document.createElement("button");
             const deleteUserButton = document.createElement("button");
+            const returnHomeButton = document.createElement("button");
 
             deleteUserButton.innerText = "Delete your account";
             viewPublishedButton.innerText = "View Published";
             viewAllButton.innerText = "View All Blogs";
             viewUnpblishedButton.innerText = "view Unpublished";
+            returnHomeButton.innerText = "home";
 
+            body.appendChild(returnHomeButton);
             body.appendChild(viewAllButton);
             body.appendChild(viewPublishedButton);
             body.appendChild(viewUnpblishedButton);
             body.appendChild(deleteUserButton);
-
+            
             loadBlogs(userBlogs, blogsDiv);
+            
+            returnHomeButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateToHome();
+            });
 
             deleteUserButton.addEventListener("click", async (e) => {
                 try {

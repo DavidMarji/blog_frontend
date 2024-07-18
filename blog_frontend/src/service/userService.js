@@ -17,10 +17,20 @@ export const signUp = async function signUp (username, email, password) {
     return localStorage.setItem('userSession', response.data);
 };  
 
+export const getCurrentUserProfile = async () => {
+    const response = await apiClient.get(`/accounts/session/me/`);
+    return response.data;
+}
+
 export const getUserProfile = async (username) => {
-    const response = await apiClient.get(`/accounts/${username}/` , {});
+    const response = await apiClient.get(`/accounts/${username}/`);
     return response.data;
 };
+
+export const getUsers = async (username) => {
+    const response = await apiClient.get(`/accounts/users/${username}/`);
+    return response.data;
+}
 
 export const deleteUser = async (username) => {
     const response = await apiClient.delete(`/accounts/${username}/`, {});

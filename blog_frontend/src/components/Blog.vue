@@ -78,6 +78,7 @@ export default {
   },
   async mounted() {
     setTimeout(async () => {
+
         const tinymce = await getTinymce();
         const id = this.$route.params.id;
         const number = this.$route.params.pageNumber;
@@ -169,7 +170,14 @@ export default {
                 }
                 throw error;
         };
-  
+
+        const returnToHomeButton = document.createElement("button");
+        returnToHomeButton.innerText = "home";
+
+        returnToHomeButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          navigateToHome();
+        });
   
         if(!publishStatus) {
             const deleteBlogButton = document.createElement("button");
