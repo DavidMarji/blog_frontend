@@ -27,25 +27,21 @@ const routes = [
         path: '/home',
         component: Home,
         name: 'Home',
-        meta: { requiresAuth : true }
     },
     {
         path: '/users/:username',
         component: User,
         name: 'User',
-        meta: { requiresAuth : true }
     },
     {
         path: '/blogs/:id/:pageNumber',
         component: Blog,
         name: 'Blog',
-        meta: { requiresAuth : true }
     },
     {
         path: '/result/:title',
         component: SearchResult,
         name: 'SearchResult',
-        meta: { requiresAuth : true }
     },
     {
         path: '/:pathMatch(.*)*',
@@ -56,28 +52,6 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes
-});
-
-router.beforeEach(async (to, from, next) => {
-    if (to.matched.some(record => record.meta.requiresAuth)) {
-        try {
-            const response = await apiClient.get('/authenticate'); 
-            if (response.status === 200) {
-                next();
-            } 
-            else {
-                console.log(response.status);
-                next('/login');
-            }
-        } 
-        catch (error) {
-            console.log(error);
-            next('/login');
-        }
-    } 
-    else {
-        next();
-    }
 });
 
 export default router;
