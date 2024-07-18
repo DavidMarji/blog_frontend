@@ -5,7 +5,6 @@ import Home from '@/components/Home.vue';
 import User from '@/components/User.vue';
 import Blog from '@/components/Blog.vue';
 import SearchResult from '@/components/SearchResult.vue';
-import apiClient from './api';
 
 const routes = [
     {

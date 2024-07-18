@@ -39,7 +39,7 @@ export default {
             e.preventDefault();
             navigateToHome();
         });
-        
+
         body.appendChild(returnHomeButton);
 
         try {
@@ -140,7 +140,7 @@ export default {
                 setUpBlogsDiv(newBlogsDiv);
                 body.appendChild(newBlogsDiv);
 
-                this.getUserPublishedBlogs(username);
+                await this.getUserPublishedBlogs(username);
             });
 
             viewUnpblishedButton.addEventListener('click', async (e) => {
@@ -190,7 +190,7 @@ export default {
                         navigateToHome();
                         break;
                     case(401):
-                        this.getUserPublishedBlogs(username);
+                        await this.getUserPublishedBlogs(username);
                         break;
                     case(409):
                         alert("blog has already been published, can't create a new page");
@@ -210,13 +210,14 @@ export default {
 
     },
     methods : {
-        getUserPublishedBlogs : function(username){
-            getAllUserPublishedBlogs(username)
-            .then(publishedBlogs => {
+        getUserPublishedBlogs : async function(username){
+            try {
+
+                const publishedBlogs = await getAllUserPublishedBlogs(username);
                 const blogsDiv = document.getElementById("blogsDiv");
                 loadBlogs(publishedBlogs, blogsDiv);
-            })
-            .catch(error => {
+            }
+            catch(error) {
                 const p = document.getElementById('title');
                 p.style.color = "red";
                 p.style.fontSize = "xx-large";
@@ -239,7 +240,7 @@ export default {
                             p.innerText = "An unknown error occured.";
                     }
                 }
-            });
+            }
         }
     }
 }

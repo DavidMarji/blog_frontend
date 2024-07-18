@@ -6,17 +6,18 @@ export default {
     mounted() {
         
         const button = document.getElementById('submitButton');
-        button.addEventListener('click', (e) => {
+        button.addEventListener('click', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            signUp(username, email, password)
-            .then(data => {
-               navigateToHome();
-            })
-            .catch(error => {
+            try {
+                const data = await signUp(username, email, password);
+                console.log(data);
+                navigateToHome();
+            }
+            catch (error) {
                 const p = document.getElementById('errorText');
                 p.style.color = "red";
 
@@ -36,7 +37,7 @@ export default {
                             break;
                     }
                 }
-            });
+            }
         });
     }
 }

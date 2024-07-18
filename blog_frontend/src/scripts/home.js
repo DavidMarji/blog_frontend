@@ -1,10 +1,10 @@
 import { createBlog, getAllPublishedBlogs } from "../service/blogService.js";
 import { getCurrentUserProfile } from "../service/userService.js";
 import { loadBlogs, setUpBlogsDiv } from "../utilities/loadBlogs.js";
-import { navigateToBlog, navigateToResult, navigateToUserProfile } from "../utilities/routerFunctions.js";
+import { navigateToBlog, navigateToLogin, navigateToResult, navigateToUserProfile } from "../utilities/routerFunctions.js";
 
 export default {
-    mounted() {
+    async mounted() {
         const button = document.getElementById('createBlog');
         button.addEventListener('click', (e) => {
             e.preventDefault();
@@ -47,6 +47,7 @@ export default {
                             break;
                         case(401):
                             p.innerText = "Unauthorized access.";
+                            navigateToLogin();
                             break;
                         default:
                             p.innerText = "An unknown error occured.";
@@ -68,7 +69,16 @@ export default {
                 navigateToUserProfile(currentUserUsername);
             }
             catch (error) {
-                console.log(error);
+                if(error.response && error.response.status === 401) {
+                    navigateToLogin();
+                }
+                else if(error.response && error.response.status === 404) {
+                    const p = document.getElementById('errorText');
+                    p.innerText = "couldn't find your account";
+                }
+                else {
+                    navigateToLogin();
+                }
             }
         });
 
@@ -79,13 +89,15 @@ export default {
         setUpBlogsDiv(blogsDiv);
         body.appendChild(blogsDiv);
 
-        getAllPublishedBlogs()
-        .then(publishedBlogs => {
+        try {
+            const publishedBlogs = await getAllPublishedBlogs();
             loadBlogs(publishedBlogs, blogsDiv);
-        })
-        .catch(error => {
-            console.log(error);
-        });
+        }
+        catch (error) {
+            if(error.response && error.response.status === 401) {
+                navigateToLogin();
+            }
+        }
 
         const searchInput = document.getElementById("search-input");
         searchInput.addEventListener("keyup", (e) => {
