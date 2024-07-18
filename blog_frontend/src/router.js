@@ -68,13 +68,11 @@ router.beforeEach(async (to, from, next) => {
             else {
                 console.log(response.status);
                 next('/login');
-                window.location.href = "/login";
             }
         } 
         catch (error) {
             console.log(error);
             next('/login');
-            window.location.href = "/login";
         }
     } 
     else {

@@ -1,4 +1,5 @@
 import { login } from '../service/userService.js';
+import { navigateToHome } from '../utilities/routerFunctions.js';
 
 export default {
 
@@ -11,7 +12,7 @@ export default {
             
             login(username, password)
             .then(data => {
-                window.location.href='/home';
+                navigateToHome();
             })
             .catch(error => {
                 const p = document.getElementById('errorText');

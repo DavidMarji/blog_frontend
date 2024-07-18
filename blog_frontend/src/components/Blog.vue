@@ -4,6 +4,7 @@ import { getBlogById, updateBlogTitle, publishBlog, deleteBlog, unpublishBlog } 
 import { saveImage, deleteImage } from "../service/imageService.js";
 import Editor from '@tinymce/tinymce-vue';
 import { getTinymce } from '@tinymce/tinymce-vue/lib/cjs/main/ts/TinyMCE';
+import { navigateToHome, navigateToBlog } from '../utilities/routerFunctions.js';
 
 export default {
   components: {
@@ -108,7 +109,7 @@ export default {
                         title.innerText = "The blog does not exist";
                         break;
                     case(401):
-                        window.location.href = '/home';
+                        navigateToHome();
                         break;
                     case(409):
                         title.innerText = "Blog Id must be a number";
@@ -149,7 +150,7 @@ export default {
                         title.innerText = "The page does not exist";
                         break;
                     case(401):
-                        window.location.href = '/home';
+                        navigateToHome();
                         break;
                     case(400):
                         title.innerText = 'Page number must be greater than 0';
@@ -252,17 +253,17 @@ export default {
                 try {
                     const published = await publishBlog(id);
                     sessionStorage.removeItem(id);
-                    location.reload();
+                    navigateToBlog(this.$route.params.id, this.$route.params.pageNumber);
                 }
                 catch (error) {
                     if(error.response) {
                         switch(error.response.status){
                             case(401):
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                             case(404):
                                 alert("failed to update blog title because it was not found in the database");
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                             case(409):
                                 alert("blog already published");
@@ -316,17 +317,17 @@ export default {
 
                     sessionStorage.removeItem(id);
                     alert("successfuly saved the blog's changes");
-                    location.reload();
+                    navigateToBlog(this.$route.params.id, this.$route.params.pageNumber);
                 }
                 catch (error) {
                     if(error.response) {
                         switch(error.response.status){
                             case(401):
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                             case(404):
                                 alert("failed to save blog changes because the blog and/or pages were not found in the database");
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                             case(400):
                                 alert("failed to save because an invalid page number (< 1) was sent");
@@ -349,17 +350,17 @@ export default {
 
                 try {
                     const createdPage = await createNewPage(id);
-                    window.location.href = `/blogs/${id}/${pageLength + 1}`;
+                    navigateToBlog(this.$route.params.id, pageLength + 1);
                 }
                 catch (error) {
                     if(error.response) {
                         switch(error.response.status){
                             case(401):
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                             case(404):
                                 alert("failed to create a new page because it was not found");
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                             case(409):
                                 alert("blog has already been published, can't create a new page");
@@ -403,18 +404,17 @@ export default {
                       }
                       sessionStorage.setItem(id, JSON.stringify(realSession));
                     }
-  
-                    window.location.href = `/blogs/${id}/${toRedirectTo}`;
+                    navigateToBlog(id, toRedirectTo);
                 }
                 catch (error) {
                     if(error.response) {
                         switch(error.response.status){
                             case(401):
-                                window.location.href = "/home";
+                                navigateToHome()
                                 break;
                             case(404):
                                 alert("failed to delete page because it was not found");
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                             case(400):
                                 alert("failed to delete page because an invalid page number ( < 1) was given");
@@ -448,17 +448,17 @@ export default {
                 try {
                     const deleted = await deleteBlog(id);
                     sessionStorage.removeItem(id);
-                    window.location.href = "/home";
+                    navigateToHome();
                 }
                 catch (error) {
                     if(error.response) {
                         switch(error.response.status){
                             case(401):
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                             case(404):
                                 alert("failed to delete blog because it was not found in the database");
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                             default:
                                 alert("unknown error occured with response code", error.response.status);
@@ -492,21 +492,21 @@ export default {
                     e.preventDefault();
                     try {
                         const a = await unpublishBlog(id);
-                        location.reload();
+                        navigateToBlog(this.$route.params.id, this.$route.params.pageNumber);
                     }
                     catch (error) {
-                        if(error.response.status === 401) window.location.href = "/home";
+                        if(error.response.status === 401) navigateToHome();
                         else if (error.response.status === 404){
                             alert("blog or user was not found");
-                            window.location.href = "/home";
+                            navigateToHome();
                         }
                         else if(error.response.status === 409) {
                             alert("can not unpublish an already private blog");
-                            location.reload();
+                            navigateToBlog(this.$route.params.id, this.$route.params.pageNumber);
                         }
                         else {
                             alert("an unknown error occured");
-                            window.location.href = "/home";
+                            navigateToHome();
                         }
                     }
                 });
@@ -524,7 +524,7 @@ export default {
         else {
             nextButton.addEventListener('click', (e) => {
                 e.preventDefault();
-                window.location.href = `/blogs/${id}/${parseInt(number) + 1}`;
+                navigateToBlog(this.$route.params.id, parseInt(this.$route.params.pageNumber) + 1);
             });
         }
   
@@ -534,7 +534,7 @@ export default {
         else {
             backButton.addEventListener('click', (e) => {
                 e.preventDefault();
-                window.location.href = `/blogs/${id}/${parseInt(number) - 1}`;
+                navigateToBlog(this.$route.params.id, parseInt(this.$route.params.pageNumber) - 1);
             });
         }
     }, "1000");

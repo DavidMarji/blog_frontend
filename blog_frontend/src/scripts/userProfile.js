@@ -1,6 +1,7 @@
 import { getAllUserPublishedBlogs, getAllUserBlogs, getAllUserUnpublishedBlogs} from "../service/blogService";
 import { loadBlogs, setUpBlogsDiv } from "../utilities/loadBlogs.js";
 import { deleteUser } from "../service/userService.js";
+import { navigateToSignup, navigateToHome } from "../utilities/routerFunctions.js";
 
 export default {
     async mounted() {
@@ -57,7 +58,7 @@ export default {
                     localStorage.clear();
                     sessionStorage.clear();
                     alert("successfuly deleted user");
-                    window.location.href = "/signUp";
+                    navigateToSignup();
                 }
                 catch (error) {
                     if(error.response) {
@@ -65,12 +66,12 @@ export default {
                             case(404):
                                 alert("user not found");
                                 console.log(error);
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                             default:
                                 alert("an unknown error occured with error code", error.response.status);
                                 console.log(error);
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                         }
                     }
@@ -101,14 +102,14 @@ export default {
                         switch(error.response.status){
                             case(404):
                                 alert("user not found");
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                             case(401):
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                             default:
                                 alert("an unknown error occured with error code", error.response.status);
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                         }
                     }
@@ -152,14 +153,14 @@ export default {
                         switch(error.response.status){
                             case(404):
                                 alert("user not found");
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                             case(401):
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                             default:
                                 alert("an unknown error occured with error code", error.response.status);
-                                window.location.href = "/home";
+                                navigateToHome();
                                 break;
                         }
                     }
@@ -176,7 +177,7 @@ export default {
                 switch(error.response.status){
                     case(404):
                         alert("user not found");
-                        window.location.href = "/home";
+                        navigateToHome();
                         break;
                     case(401):
                         this.getUserPublishedBlogs(username);
@@ -186,7 +187,7 @@ export default {
                         break;
                     default:
                         alert("an unknown error occured with error code", error.response.status);
-                        window.location.href = "/home";
+                        navigateToHome();
                         break;
                 }
             }
@@ -216,7 +217,7 @@ export default {
                 else {
                     switch(error.response.status) {
                         case(401):
-                            window.location.href = "/home";
+                            navigateToHome();
                             break;
                         case(404):
                             p.innerText = "Sorry, the given user does not exist.";

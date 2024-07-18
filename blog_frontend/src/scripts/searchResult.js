@@ -1,5 +1,6 @@
 import { getBlogByTitle } from "../service/blogService";
 import { loadBlogs, setUpBlogsDiv } from "../utilities/loadBlogs";
+import { navigateToHome } from "../utilities/routerFunctions";
 
 export default {
     async mounted() {
@@ -22,19 +23,19 @@ export default {
                         p.appendChild(textNode);
                         break;
                     case(401):
-                        window.location.href = "/home";
+                        navigateToHome();
                         break;
                     default:
                         console.log(error);
                         alert("an unknown error occured");
-                        window.location.href = "/home";
+                        navigateToHome();
                         break;
                 }
             }
             else {
                 alert("An unknown error occured");
                 console.log(error);
-                window.location.href = "/home";
+                navigateToHome();
             }
 
         }

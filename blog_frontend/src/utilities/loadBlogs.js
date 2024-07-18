@@ -1,3 +1,5 @@
+import { navigateToBlog } from './routerFunctions.js';
+
 export const loadBlogs = function(blogs, blogsDiv){
     const numCols = 5; // Number of columns per row
     const colWidth = 100 / numCols; // Width percentage of each column
@@ -38,7 +40,7 @@ export const loadBlogs = function(blogs, blogsDiv){
 
             newCol.addEventListener('click', (e) => {
                 e.preventDefault();
-                window.location.href = `/blogs/${newCol.blogId}/1`;
+                navigateToBlog(newCol.blogId, 1);
             });
 
             newCol.addEventListener('mouseenter', (e) => {

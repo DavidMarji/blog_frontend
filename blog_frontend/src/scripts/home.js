@@ -1,5 +1,6 @@
 import { createBlog, getAllPublishedBlogs } from "../service/blogService.js";
 import { loadBlogs, setUpBlogsDiv } from "../utilities/loadBlogs.js";
+import { navigateToBlog, navigateToResult } from "../utilities/routerFunctions.js";
 
 export default {
     mounted() {
@@ -26,7 +27,8 @@ export default {
                     'title' : blogTitle
                 }));
 
-                window.location.href = `/blogs/${blogId}/1`;
+                // next(`/blogs/${blogId}/1`);
+                navigateToBlog(blogId, 1);
             }
             catch(error){
                 const p = document.getElementById('errorText');
@@ -78,7 +80,8 @@ export default {
                 const searchTerm = document.getElementById("search-input").value;
                 if (searchTerm) {
                     const encodedTitle = encodeURI(searchTerm);
-                    window.location.href = `/result/${encodedTitle}`;
+                    // next(`/result/${encodedTitle}`);
+                    navigateToResult(encodedTitle);
                 }
             }
         },
