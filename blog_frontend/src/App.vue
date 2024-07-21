@@ -2,6 +2,8 @@
 import Editor from '@tinymce/tinymce-vue';
 
 const apiKey = import.meta.env.VITE_TINY_MCE_API_KEY;
+
+
 </script>
 
 <template>
