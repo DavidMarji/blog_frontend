@@ -57,3 +57,11 @@ export const loadUsers = function(users, usersDiv){
         }
     }
 };
+
+export const setUpUsersDiv = function(blogsDiv){
+    blogsDiv.style.position = 'absolute';
+    blogsDiv.style.top = '50%';
+    blogsDiv.style.width = '70%';
+    blogsDiv.style.margin = 'auto';
+    blogsDiv.style.display = 'block';
+};

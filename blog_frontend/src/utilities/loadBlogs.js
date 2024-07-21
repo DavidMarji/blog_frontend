@@ -59,10 +59,9 @@ export const loadBlogs = function(blogs, blogsDiv){
 };
 
 export const setUpBlogsDiv = function(blogsDiv){
-    blogsDiv.style.position = "absolute";
+    blogsDiv.style.position = 'absolute';
     blogsDiv.style.top = '20%';
     blogsDiv.style.width = '70%';
-    blogsDiv.style.marginLeft = '15%';
-    blogsDiv.style.marginRight = '15%';
+    blogsDiv.style.margin = 'auto';
     blogsDiv.style.display = 'block';
 };
