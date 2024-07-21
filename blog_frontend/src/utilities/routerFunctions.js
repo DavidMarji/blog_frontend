@@ -1,27 +1,28 @@
 import router from '@/router';
 
 export const navigateToHome = function navigateToHome() {
-    router.replace('/home');
+    router.push('/home');
 };
 
 export const navigateToLogin = function navigateToLogin() {
-    router.replace('/login');
+    router.push('/login');
 };
 
 export const navigateToSignup = function navigateToSignup() {
-    router.replace('/signUp');
+    router.push('/signUp');
 };
 
 export const navigateToResult = function navigateToResult(title) {
-    router.replace(`/result/${title}`);
+    router.push(`/result/${title}`);
 };
 
 export const navigateToUserProfile = function navigateToUserProfile(username) {
-    router.replace(`/users/${username}`);
+    router.push(`/users/${username}`);
 };
 
-export const navigateToBlog = function navigateToBlog(blogId, pageNumber) {
-    router.replace(`/blogs/${blogId}/${pageNumber}`);
+export const navigateToBlog = async function navigateToBlog(blogId, pageNumber) {
+    await router.push(`/blogs/${blogId}/${pageNumber}`);
+    router.go(0);
 };
 
 export const reloadPage = function reloadPage() {

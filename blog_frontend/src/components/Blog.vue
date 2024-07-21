@@ -87,7 +87,7 @@ export default {
             const pageNumber = document.getElementById("pageNumber");
             const pageContentDiv = document.getElementById("pageContentDiv");
             const pageContent = await tinymce.activeEditor;
-        
+            
             let publishStatus;
             let pageLength;
         
@@ -96,8 +96,10 @@ export default {
                 pageLength = parseInt(blog.number_of_pages, 10);
                 publishStatus = blog.published;
                 title.innerText = sessionStorage.getItem(id) ? 
-                (JSON.parse(sessionStorage.getItem(id)).title 
+                (JSON.parse(sessionStorage.getItem(id)) 
                     ? JSON.parse(sessionStorage.getItem(id)).title
+                        ? JSON.parse(sessionStorage.getItem(id)).title
+                        : blog.title
                     : blog.title)
                 : blog.title;
     
@@ -136,9 +138,9 @@ export default {
                 pageNumber.innerText = page.page_number;
     
                 pageContent.setContent(sessionStorage.getItem(id) ? 
-                (JSON.parse(sessionStorage.getItem(id))[number] 
-                    ? (JSON.parse(sessionStorage.getItem(id))[number].pageContent 
-                        ? JSON.parse(sessionStorage.getItem(id))[number].pageContent 
+                (JSON.parse(sessionStorage.getItem(id))[page.page_number] 
+                    ? (JSON.parse(sessionStorage.getItem(id))[page.page_number].pageContent 
+                        ? JSON.parse(sessionStorage.getItem(id))[page.page_number].pageContent 
                         : page.page_content) 
                     : page.page_content)
                 : page.page_content);
@@ -239,28 +241,31 @@ export default {
                 topDiv.appendChild(createButton);
                 topDiv.appendChild(publishButton);
                 topDiv.appendChild(deleteBlogButton);
-        
-                pageContent.on('change', function() {
-                    const blogSession = sessionStorage.getItem(id);
+
+                const currentPageNum = this.$route.params.pageNumber;
+                const currentBlogId = this.$route.params.id;
+
+                await getTinymce().activeEditor.on('change', async function() {
+                    const currentContent = await getTinymce().activeEditor.getContent();
+                    const blogSession = sessionStorage.getItem(currentBlogId);
                     if(blogSession) {
-                    const realSession = JSON.parse(blogSession);
-                    realSession[number] = {
-                        'pageContent' : pageContent.getContent()
-                    };
-                
-                    sessionStorage.setItem(id, JSON.stringify(realSession));
+                        const realSession = JSON.parse(blogSession);
+                        realSession[currentPageNum] = {
+                            'pageContent' : currentContent
+                        };
+                    
+                        sessionStorage.setItem(id, JSON.stringify(realSession));
                     }
                     else {
-                    const realSession = { id : {
-                        'title' : title.innerText,
-                        } 
-                    };
-    
-                    realSession[number] = {
-                        'pageContent' : pageContent.getContent()
-                    };
-    
-                    sessionStorage.setItem(id, JSON.stringify(realSession));
+                        const realSession = {
+                            "title" : title.innerText
+                        }
+        
+                        realSession[currentPageNum] = {
+                            'pageContent' : currentContent
+                        };
+
+                        sessionStorage.setItem(id, JSON.stringify(realSession));
                     }
                 });
     
@@ -279,9 +284,8 @@ export default {
                         sessionStorage.setItem(id, JSON.stringify(realSession));
                     }
                     else {
-                        const realSession = { id : {
+                        const realSession = {
                             'title' : title.innerText,
-                        } 
                         };
     
                         sessionStorage.setItem(id, JSON.stringify(realSession));
@@ -416,7 +420,7 @@ export default {
                         if(toRedirectTo === parseInt(this.$route.params.pageNumber)) {
                             reloadPage();
                         }
-                        navigateToBlog(id, toRedirectTo);
+                        await navigateToBlog(id, toRedirectTo);
                     }
                     catch (error) {
                         if(error.response) {
@@ -524,7 +528,6 @@ export default {
             
                         try {
                             const unpublished = await unpublishBlog(id);
-                            sessionStorage.removeItem(id);
                             reloadPage();
                         }
                         catch (error) {
