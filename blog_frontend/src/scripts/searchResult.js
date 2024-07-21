@@ -40,11 +40,6 @@ export default {
                             break;
                     }
                 }
-                else {
-                    alert("An unknown error occured");
-                    console.log(error);
-                    navigateToHome();
-                }
         
             }
 
@@ -63,11 +58,6 @@ export default {
                             navigateToHome();
                             break;
                     }
-                }
-                else {
-                    alert("An unknown error occured");
-                    console.log(error);
-                    navigateToHome();
                 }
             }
 

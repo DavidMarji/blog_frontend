@@ -18,7 +18,6 @@ export default {
                 const searchTerm = document.getElementById("search-input").value;
                 if (searchTerm) {
                     const encodedTitle = encodeURI(searchTerm);
-                    // next(`/result/${encodedTitle}`);
                     navigateToResult(encodedTitle);
                 }
             }
