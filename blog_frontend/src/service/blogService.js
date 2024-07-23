@@ -1,7 +1,7 @@
 import apiClient from "../api";
 
 export const getAllPublishedBlogs = async () => {
-    const response = await apiClient.get('/blogs/all/', {});
+    const response = await apiClient.get('/blogs/', {});
     return response.data;
 };
 
@@ -48,17 +48,17 @@ export const deleteBlog = async (id) => {
 };
 
 export const getAllUserBlogs = async (username) => {
-    const response = await apiClient.get(`/accounts/${username}/blogs/all/`);
+    const response = await apiClient.get(`/accounts/${username}/blogs/`);
     return response.data;
 };
 
 export const getAllUserUnpublishedBlogs = async (username) => {
-    const response = await apiClient.get(`/accounts/${username}/blogs/unpublished/all/`, {});
+    const response = await apiClient.get(`/accounts/${username}/blogs/unpublished/`, {});
     return response.data;
 };
 
 // user profile
 export const getAllUserPublishedBlogs = async (username) => {
-    const response = await apiClient.get(`/accounts/${username}/blogs/published/all/`, {});
+    const response = await apiClient.get(`/accounts/${username}/blogs/published/`, {});
     return response.data;
 };
